@@ -1801,7 +1801,6 @@ func Test_ServerSingleGraphiteIntegration_NoDatabase(t *testing.T) {
 }
 
 func Test_ServerOpenTSDBIntegration(t *testing.T) {
-	t.Skip()
 	t.Parallel()
 	if testing.Short() {
 		t.Skip()
@@ -1812,14 +1811,14 @@ func Test_ServerOpenTSDBIntegration(t *testing.T) {
 	now := time.Now().UTC().Round(time.Second)
 	c, _ := main.NewTestConfig()
 	o := main.OpenTSDB{
-		Port:            4242,
+		Port:            0,
 		Enabled:         true,
 		Database:        "opentsdb",
 		RetentionPolicy: "raw",
 	}
 	c.OpenTSDB = o
 
-	t.Logf("OpenTSDB Connection String: %s\n", o.ListenAddress(c.BindAddress))
+	t.Logf("OpenTSDB Connection String: %s\n", o.ListenAddress())
 	nodes := createCombinedNodeCluster(t, testName, dir, nNodes, c)
 	defer nodes.Close()
 
@@ -1827,7 +1826,8 @@ func Test_ServerOpenTSDBIntegration(t *testing.T) {
 	createRetentionPolicy(t, testName, nodes, "opentsdb", "raw", len(nodes))
 
 	// Connect to the graphite endpoint we just spun up
-	conn, err := net.Dial("tcp", o.ListenAddress(c.BindAddress))
+	host := nodes[0].node.OpenTSDBServer.Addr().String()
+	conn, err := net.Dial("tcp", host)
 	if err != nil {
 		t.Fatal(err)
 		return
@@ -1854,7 +1854,6 @@ func Test_ServerOpenTSDBIntegration(t *testing.T) {
 }
 
 func Test_ServerOpenTSDBIntegration_WithTags(t *testing.T) {
-	t.Skip()
 	t.Parallel()
 	if testing.Short() {
 		t.Skip()
@@ -1874,7 +1873,7 @@ func Test_ServerOpenTSDBIntegration_WithTags(t *testing.T) {
 	}
 	c.OpenTSDB = o
 
-	t.Logf("OpenTSDB Connection String: %s\n", o.ListenAddress(c.BindAddress))
+	t.Logf("OpenTSDB Connection String: %s\n", o.ListenAddress())
 	nodes := createCombinedNodeCluster(t, testName, dir, nNodes, c)
 	defer nodes.Close()
 
@@ -1882,7 +1881,8 @@ func Test_ServerOpenTSDBIntegration_WithTags(t *testing.T) {
 	createRetentionPolicy(t, testName, nodes, "opentsdb", "raw", len(nodes))
 
 	// Connect to the graphite endpoint we just spun up
-	conn, err := net.Dial("tcp", o.ListenAddress(c.BindAddress))
+	host := nodes[0].node.OpenTSDBServer.Addr().String()
+	conn, err := net.Dial("tcp", host)
 	if err != nil {
 		t.Fatal(err)
 		return
@@ -1912,7 +1912,6 @@ func Test_ServerOpenTSDBIntegration_WithTags(t *testing.T) {
 }
 
 func Test_ServerOpenTSDBIntegration_BadData(t *testing.T) {
-	t.Skip()
 	t.Parallel()
 	if testing.Short() {
 		t.Skip()
@@ -1932,7 +1931,7 @@ func Test_ServerOpenTSDBIntegration_BadData(t *testing.T) {
 	}
 	c.OpenTSDB = o
 
-	t.Logf("OpenTSDB Connection String: %s\n", o.ListenAddress(c.BindAddress))
+	t.Logf("OpenTSDB Connection String: %s\n", o.ListenAddress())
 	nodes := createCombinedNodeCluster(t, testName, dir, nNodes, c)
 	defer nodes.Close()
 
@@ -1940,7 +1939,8 @@ func Test_ServerOpenTSDBIntegration_BadData(t *testing.T) {
 	createRetentionPolicy(t, testName, nodes, "opentsdb", "raw", len(nodes))
 
 	// Connect to the graphite endpoint we just spun up
-	conn, err := net.Dial("tcp", o.ListenAddress(c.BindAddress))
+	host := nodes[0].node.OpenTSDBServer.Addr().String()
+	conn, err := net.Dial("tcp", host)
 	if err != nil {
 		t.Fatal(err)
 		return
@@ -1968,7 +1968,6 @@ func Test_ServerOpenTSDBIntegration_BadData(t *testing.T) {
 }
 
 func TestSeparateBrokerDataNode(t *testing.T) {
-	t.Skip()
 	t.Parallel()
 	testName := "TestSeparateBrokerDataNode"
 	if testing.Short() {
@@ -2020,7 +2019,6 @@ func TestSeparateBrokerDataNode(t *testing.T) {
 }
 
 func TestSeparateBrokerTwoDataNodes(t *testing.T) {
-	t.Skip()
 	t.Parallel()
 	testName := "TestSeparateBrokerTwoDataNodes"
 	if testing.Short() {
